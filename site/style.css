@@ -1,0 +1,30 @@
+@font-face {
+  font-family: "Nunito";
+  src: url("/fonts/Nunito-ExtraBold.ttf") format("truetype");
+  font-weight: 800;
+  font-display: swap;
+}
+
+:root {
+  --bg: #f7f3ec;
+  --ink: #4a4038;
+  --soft: #7a6d61;
+  --accent: #4a90d9;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: system-ui, sans-serif;
+  font-size: 18px;
+}
+
+main { padding: 24px 16px; max-width: 560px; }
+h1 { font-family: "Nunito", system-ui, sans-serif; font-weight: 800; font-size: 2.2rem; margin: 0 0 8px; }
+a { color: var(--accent); }
+ul { padding-left: 1.2em; }
+.small { color: var(--soft); font-size: 0.9rem; margin-top: 32px; }

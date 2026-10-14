@@ -1,0 +1,53 @@
+# jessabekker.be, uploaded by deploy.sh to /opt/edge/sites/ on the server and
+# imported by the shared Caddyfile (../server/edge/Caddyfile).
+# Everything is behind the family login, except the login pages themselves.
+
+(jessabekker_login) {
+	# Never trust identity headers sent by the browser.
+	request_header -X-Auth-Request-User
+	request_header -X-Auth-Request-Email
+	request_header -X-Auth-Request-Preferred-Username
+
+	forward_auth jessabekker-auth:4180 {
+		uri /oauth2/auth
+		header_up X-Real-IP {remote_host}
+		# Apps behind the gate can read who is visiting from these headers.
+		copy_headers X-Auth-Request-User X-Auth-Request-Email X-Auth-Request-Preferred-Username
+		@signed_out status 401
+		handle_response @signed_out {
+			redir * https://jessabekker.be/oauth2/start?rd={scheme}://{host}{uri}
+		}
+	}
+}
+
+jessabekker.be {
+	import security_headers
+	encode zstd gzip
+
+	# Login, callback, sign-out and /oauth2/userinfo
+	handle /oauth2/* {
+		reverse_proxy jessabekker-auth:4180 {
+			header_up X-Real-IP {remote_host}
+		}
+	}
+
+	# Home page (site/ in this repo)
+	handle {
+		import jessabekker_login
+		root * /srv/jessabekker/home
+		header Cache-Control "no-cache"
+		file_server
+	}
+}
+
+www.jessabekker.be {
+	redir https://jessabekker.be{uri} 308
+}
+
+# A future app gets its own subdomain, behind the same login, e.g.:
+#
+# boodschappen.jessabekker.be {
+# 	import security_headers
+# 	import jessabekker_login
+# 	reverse_proxy jessabekker-boodschappen:8000
+# }
