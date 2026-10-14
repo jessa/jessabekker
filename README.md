@@ -1,7 +1,8 @@
 # jessabekker.be
 
-Jessa's personal domain. The root is **public**: for now a bare placeholder,
-later a business website (services, expertise). The **family tools** live
+Jessa's personal domain. The root is **public**: for now it forwards to
+<https://jessa.github.io> (research page); later a business website (services,
+expertise). The **family tools** live
 under `/tools/` (household apps, private trials) behind one login: **Sign in
 with Google**, and only addresses on an allow-list get in.
 
@@ -11,17 +12,16 @@ browser ──▶ shared Caddy (../server)
               ├── /tools/*   → Caddy first asks the gate "is this visitor signed
               │                in and on the list?" → yes: serve the page or app,
               │                no: send them to Google sign-in
-              └── anything else → public pages (site/public/)
+              └── anything else → forward to https://jessa.github.io (for now)
 ```
 
 Apps behind the gate don't need their own login: Caddy passes who is
 visiting in the `X-Auth-Request-Email` and `X-Auth-Request-User` headers.
 
 ```
-site/public/             public pages (placeholder now; business site later)
 site/tools/              family home page at /tools/ (shows who is signed in)
 deploy/compose.yml       the login gate (oauth2-proxy), on the server's "edge" network
-deploy/jessabekker.caddy Caddy site file: public pages, /tools/ behind the login, www redirect, app templates
+deploy/jessabekker.caddy Caddy site file: forward to jessa.github.io, /tools/ behind the login, www redirect, app templates
 deploy/deploy.sh         deploy from the Mac; also edits the allow-list
 deploy/*.example         templates for the server-side secrets and allow-list
 ```

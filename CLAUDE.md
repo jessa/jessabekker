@@ -1,8 +1,8 @@
 # jessabekker.be: context for Claude
 
-Jessa's personal domain. The root (`site/public/`) is **public**: a bare
-placeholder now, later a business website (services, expertise); not being
-built yet. Household apps and private (pre-trial) projects live under
+Jessa's personal domain. The root is **public**: for now Caddy forwards it to
+https://jessa.github.io (her existing research page, separate repo); later a
+business website (services, expertise), not being built yet. Household apps and private (pre-trial) projects live under
 **`/tools/`, family only**. README.md has the layout, setup and how to add an app.
 Workspace-wide context is in `../CLAUDE.md`; the server itself (setup,
 shared Caddy, backups) is in `../server`.

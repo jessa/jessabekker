@@ -1,6 +1,6 @@
 # jessabekker.be, uploaded by deploy.sh to /opt/edge/sites/ on the server and
 # imported by the shared Caddyfile (../server/edge/Caddyfile).
-#   /         public (for now a bare placeholder; later the business website)
+#   /         public: for now forwards to https://jessa.github.io (later the business website)
 #   /tools/   family tools, behind the family login
 #   /oauth2/  the login gate itself
 
@@ -43,10 +43,10 @@ jessabekker.be {
 		file_server
 	}
 
-	# Public pages (site/public/ in this repo)
+	# Public part: for now Jessa's existing page on GitHub Pages.
+	# Replace with the business website later (e.g. files in site/public/).
 	handle {
-		root * /srv/jessabekker/public
-		file_server
+		redir https://jessa.github.io{uri} 302
 	}
 }
 
