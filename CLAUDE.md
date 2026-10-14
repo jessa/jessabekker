@@ -15,7 +15,7 @@ shared Caddy, backups) is in `../server`.
   those headers from incoming requests first; keep that for every new site
   block, or a visitor could fake them.
 - Every new app: own container on the `edge` network, own data in
-  `/opt/apps/<app>/data/` (backed up nightly by ../server), and a subdomain
+  `/opt/apps/<app>/data/` (backed up nightly by ../server), and a
   `/tools/<app>/` route or subdomain with `import jessabekker_login`.
   Anything outside `/tools/` and `/oauth2/` is public: never put family
   content there. Never give these containers access
