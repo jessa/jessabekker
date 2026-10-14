@@ -1,6 +1,8 @@
 # jessabekker.be, uploaded by deploy.sh to /opt/edge/sites/ on the server and
 # imported by the shared Caddyfile (../server/edge/Caddyfile).
-# Everything is behind the family login, except the login pages themselves.
+#   /         public (for now a bare placeholder; later the business website)
+#   /tools/   family tools, behind the family login
+#   /oauth2/  the login gate itself
 
 (jessabekker_login) {
 	# Never trust identity headers sent by the browser.
@@ -15,7 +17,8 @@
 		copy_headers X-Auth-Request-User X-Auth-Request-Email X-Auth-Request-Preferred-Username
 		@signed_out status 401
 		handle_response @signed_out {
-			redir * https://jessabekker.be/oauth2/start?rd={scheme}://{host}{uri}
+			# orig_uri: the full path, also inside handle_path (which strips /tools)
+			redir * https://jessabekker.be/oauth2/start?rd={scheme}://{host}{http.request.orig_uri}
 		}
 	}
 }
@@ -31,11 +34,18 @@ jessabekker.be {
 		}
 	}
 
-	# Home page (site/ in this repo)
-	handle {
+	# Family tools (site/tools/ in this repo), behind the login
+	redir /tools /tools/ 308
+	handle_path /tools/* {
 		import jessabekker_login
-		root * /srv/jessabekker/home
+		root * /srv/jessabekker/tools
 		header Cache-Control "no-cache"
+		file_server
+	}
+
+	# Public pages (site/public/ in this repo)
+	handle {
+		root * /srv/jessabekker/public
 		file_server
 	}
 }
@@ -44,7 +54,15 @@ www.jessabekker.be {
 	redir https://jessabekker.be{uri} 308
 }
 
-# A future app gets its own subdomain, behind the same login, e.g.:
+# A future family app: under /tools/ (if the app supports a base path), e.g.
+#
+# 	handle /tools/boodschappen/* {
+# 		import jessabekker_login
+# 		reverse_proxy jessabekker-boodschappen:8000
+# 	}
+#
+# (inside the jessabekker.be block, above the /tools/* block), or on its own
+# subdomain, behind the same login (one sign-in covers both):
 #
 # boodschappen.jessabekker.be {
 # 	import security_headers

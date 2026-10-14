@@ -1,24 +1,27 @@
 # jessabekker.be
 
-Jessa's personal site: household apps and private trials, for family only.
-Everything on `jessabekker.be` (and later `*.jessabekker.be`) sits behind one
-login: **Sign in with Google**, and only addresses on an allow-list get in.
+Jessa's personal domain. The root is **public**: for now a bare placeholder,
+later a business website (services, expertise). The **family tools** live
+under `/tools/` (household apps, private trials) behind one login: **Sign in
+with Google**, and only addresses on an allow-list get in.
 
 ```
 browser ──▶ shared Caddy (../server)
               ├── /oauth2/*  → login gate (oauth2-proxy, Google)
-              └── anything else: Caddy first asks the gate "is this visitor
-                  signed in and on the list?" → yes: serve the page or app,
-                  no: send them to Google sign-in
+              ├── /tools/*   → Caddy first asks the gate "is this visitor signed
+              │                in and on the list?" → yes: serve the page or app,
+              │                no: send them to Google sign-in
+              └── anything else → public pages (site/public/)
 ```
 
 Apps behind the gate don't need their own login: Caddy passes who is
 visiting in the `X-Auth-Request-Email` and `X-Auth-Request-User` headers.
 
 ```
-site/                    home page (static; shows who is signed in)
+site/public/             public pages (placeholder now; business site later)
+site/tools/              family home page at /tools/ (shows who is signed in)
 deploy/compose.yml       the login gate (oauth2-proxy), on the server's "edge" network
-deploy/jessabekker.caddy Caddy site file: home page, login, www redirect, app template
+deploy/jessabekker.caddy Caddy site file: public pages, /tools/ behind the login, www redirect, app templates
 deploy/deploy.sh         deploy from the Mac; also edits the allow-list
 deploy/*.example         templates for the server-side secrets and allow-list
 ```
@@ -31,8 +34,9 @@ deploy/*.example         templates for the server-side secrets and allow-list
 3. **Google Cloud**: a separate project, so the sign-in screen shows this
    site and not Cork-e:
    - New project, e.g. `jessabekker`.
-   - **Branding**: app name `jessabekker.be`, your Gmail as support email,
-     home page `https://jessabekker.be`, authorised domain `jessabekker.be`.
+   - **Branding**: app name `jessabekker.be` (or e.g. "Familie Bekker"), your
+     Gmail as support email, home page `https://jessabekker.be`, authorised
+     domain `jessabekker.be`.
    - **Audience**: External, leave on **Testing**, add each family member's
      Google address as a test user.
    - **Data access**: `openid`, `userinfo.email`, `userinfo.profile`.
@@ -52,8 +56,9 @@ deploy/*.example         templates for the server-side secrets and allow-list
 
 Run it as its own container on the `edge` network (own compose project, own
 data in `/opt/apps/<app>/data/`, picked up by the nightly backup), then add a
-subdomain block to `deploy/jessabekker.caddy` with `import jessabekker_login`
-(there's a commented example) and a DNS record for the subdomain.
+`/tools/<app>/` route (or a subdomain) with `import jessabekker_login` to
+`deploy/jessabekker.caddy`; there are commented examples. Link it from
+`site/tools/index.html`.
 
 ## Maintenance
 
