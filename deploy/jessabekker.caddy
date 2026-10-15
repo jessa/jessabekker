@@ -34,6 +34,14 @@ jessabekker.be {
 		}
 	}
 
+	# Personal finance app (../financien), behind the login; the app itself
+	# only lets its owner in (FINANCIEN_OWNERS).
+	redir /tools/financien /tools/financien/ 308
+	handle_path /tools/financien/* {
+		import jessabekker_login
+		reverse_proxy jessabekker-financien:8000
+	}
+
 	# Family tools (site/tools/ in this repo), behind the login
 	redir /tools /tools/ 308
 	handle_path /tools/* {
