@@ -23,8 +23,14 @@
       .then((r) => (r.ok ? r.json() : null))
       .then((u) => {
         if (!u) return;
-        const name = u.preferredUsername || u.user || "";
-        if (name && !name.includes("@")) document.getElementById("name").textContent = ", " + name.split(" ")[0];
+        // Google only gives the gate an account number ("user") and the
+        // email address, no name: take the first name from the address
+        // (jessa.bekker@… → Jessa).
+        const local = (u.email || "").split("@")[0].split(/[.+_-]/)[0];
+        if (local && !/^\d+$/.test(local)) {
+          document.getElementById("name").textContent =
+            ", " + local.charAt(0).toUpperCase() + local.slice(1);
+        }
         document.getElementById("email").textContent = u.email || "";
       });
   </script>
