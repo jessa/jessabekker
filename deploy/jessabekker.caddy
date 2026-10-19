@@ -46,6 +46,14 @@ jessabekker.be {
 		reverse_proxy jessabekker-financien:8000
 	}
 
+	# Meal planning app (../aantafel), behind the login; the app itself
+	# only lets AANTAFEL_USERS in.
+	redir /tools/aantafel /tools/aantafel/ 308
+	handle_path /tools/aantafel/* {
+		import jessabekker_login
+		reverse_proxy jessabekker-aantafel:8000
+	}
+
 	# Family tools (site/tools/ in this repo), behind the login
 	redir /tools /tools/ 308
 	handle_path /tools/* {
